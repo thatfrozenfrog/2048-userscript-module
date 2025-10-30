@@ -23,11 +23,13 @@ jobs:
           emcc solver.cpp -O3 -std=c++17 -s WASM=0 -o dist/solver.js \
             -s EXPORTED_FUNCTIONS='["_solve_move"]' \
             -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]'
-      - name: commit built files
-        uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Create pull request with build artifacts
+        uses: peter-evans/create-pull-request@v7
         with:
-          commit_message: "Build: Emscripten build on ${{ github.sha }}"
-          commit_user_name: "github-actions[bot]"
-          commit_user_email: "41898282+github-actions[bot]@users.noreply.github.com"
-          file_pattern: "dist/*"
-        
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Build: Emscripten build on ${{ github.sha }}"
+          branch: "build-${{ github.run_id }}"
+          title: "Build: dist/solver.js"
+          body: "Automated Emscripten build (sha: ${{ github.sha }})"
+          labels: "autobuild"
+          paths: "dist/*"
