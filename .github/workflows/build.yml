@@ -11,9 +11,12 @@ jobs:
         with:
           fetch-depth: 0
       - name: setup Emscripten
-        uses: mymindstorm/setup-emscripten@v1
+        uses: emscripten-core/setup-emsdk@v2
         with:
-          emsdk-version: latest
+          emsdk: latest
+
+      - name: verify emcc
+        run: emcc --version
       - name: build
         run: |
           mkdir -p dist
