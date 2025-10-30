@@ -1,0 +1,30 @@
+name: Compiler
+
+on: [push, pull_request]
+jobs:
+  build:
+    name: Emscripten compile
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: setup Emscripten
+        uses: mymindstorm/setup-emscripten@v1
+        with:
+          emsdk-version: latest
+      - name: build
+        run: |
+          mkdir -p dist
+          emcc solver.cpp -O3 -std=c++17 -s WASM=0 -o dist/solver.js \
+            -s EXPORTED_FUNCTIONS='["_solve_move"]' \
+            -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]'
+      - name: commit built files
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Build: Emscripten build on ${{ github.sha }}"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "41898282+github-actions[bot]@users.noreply.github.com"
+          file_pattern: "dist/*"
+        
