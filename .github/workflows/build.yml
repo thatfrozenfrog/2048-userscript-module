@@ -23,7 +23,11 @@ jobs:
           mkdir -p dist
           emcc solver.cpp -O3 -std=c++17 -s WASM=0 -o dist/solver.js \
             -s EXPORTED_FUNCTIONS='["_solve_move"]' \
-            -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]'
+            -s EXPORTED_RUNTIME_METHODS='["ccall","cwrap"]' \
+            -s ENVIRONMENT=web \
+            -s MODULARIZE=1 \
+            -s EXPORT_NAME="SolveBoard"
+
       - name: Create pull request with build artifacts
         uses: peter-evans/create-pull-request@v7
         with:
